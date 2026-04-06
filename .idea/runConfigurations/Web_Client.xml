@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Web Client" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/web-client/.kobweb/server/server.jar" />
+    <option name="VM_PARAMETERS" value="-Dkobweb.server.environment=DEV -Dkobweb.site.layout=FULLSTACK -Dio.ktor.development=true" />
+    <option name="WORKING_DIRECTORY" value="C:\Users\dotnomi\IdeaProjects\Palodon\web-client" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Gradle.BeforeRunTask" enabled="true" tasks="kobwebUnpackServerJar kobwebSyncServerPluginJars" externalProjectPath="$PROJECT_DIR$/web-client" />
+      <option name="LaunchBrowser.Before.Run" url="http://localhost:4200" />
+    </method>
+  </configuration>
+</component>

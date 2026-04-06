@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Native iOS" type="KmmRunConfiguration" factoryName="iOS Application">
+    <option name="CHOSEN_DEVICE" value="iPhone 15 Pro Max" />
+    <option name="DEVICE_AND_SNAPSHOT_COMBO_BOX" value="" />
+    <option name="DEBUGGER_TYPE" value="Native" />
+    <option name="EXECUTION_TARGET_ID" value="" />
+    <option name="MODULE_NAME" value="" />
+    <option name="PROJECT_PATH" value="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
