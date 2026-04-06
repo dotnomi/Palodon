@@ -1,0 +1,14 @@
+site:
+  title: "Palodon"
+
+server:
+  files:
+    dev:
+      contentRoot: "build/processedResources/js/main/public"
+      script: "build/kotlin-webpack/js/developmentExecutable/webclient.js"
+      api: "build/libs/webclient.jar"
+    prod:
+      script: "build/kotlin-webpack/js/productionExecutable/webclient.js"
+      siteRoot: ".kobweb/site"
+
+  port: 4200

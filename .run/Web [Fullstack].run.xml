@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Web [Fullstack]" type="CompoundRunConfigurationType">
+    <toRun name="Web Client" type="JarApplication" />
+    <toRun name="Server [Quarkus]" type="QuarkusRunConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

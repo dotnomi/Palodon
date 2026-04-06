@@ -1,0 +1,64 @@
+# --- Gradle ---
+.gradle/
+build/
+*/build/
+
+# --- Kotlin Multiplatform / JS ---
+.kotlin/
+kotlin-js-store/
+node_modules/
+yarn.lock
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.yarn-integrity
+
+# --- Android ---
+local.properties
+.externalNativeBuild
+.cxx
+*.keystore
+!debug.keystore
+captures/
+output.json
+
+# --- IntelliJ IDEA ---
+.idea/
+!.idea/runConfigurations/
+!.idea/vcs.xml
+!.idea/gradle.xml
+!.idea/kotlinc.xml
+!.idea/artifacts/
+.idea/workspace.xml
+.idea/shelf/
+.idea/httpRequests/
+.idea/queries/
+.idea/dataSources/
+.idea/dataSources.local.xml
+*.iml
+*.iws
+
+# --- VS Code ---
+.vscode/
+
+# --- Kobweb ---
+.kobweb/server/
+.kobweb/build/
+!.kobweb/conf.yaml
+
+# --- Quarkus ---
+.quarkus/
+bin/
+
+# --- OS Specific ---
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Other ---
+*.swp
+*.bak
+*.tmp
+*.log
+.env
