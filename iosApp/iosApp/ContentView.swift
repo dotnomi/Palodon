@@ -1,4 +1,4 @@
-import ComposeApp
+import native_client
 import SwiftUI
 import UIKit
 
