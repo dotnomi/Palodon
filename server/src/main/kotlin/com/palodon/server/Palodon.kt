@@ -8,8 +8,8 @@ class Palodon {
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            print("Test")
             Quarkus.run(*args)
+            Quarkus.waitForExit()
         }
     }
 }
