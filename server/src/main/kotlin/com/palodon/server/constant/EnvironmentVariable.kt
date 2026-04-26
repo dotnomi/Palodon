@@ -1,0 +1,11 @@
+package com.palodon.server.constant
+
+object EnvironmentVariable {
+    const val DB_TYPE = "PALODON_DB_TYPE"
+    const val DB_POSTGRES_HOST = "PALODON_DB_POSTGRES_HOST"
+    const val DB_POSTGRES_PORT = "PALODON_DB_POSTGRES_PORT"
+    const val DB_POSTGRES_DATABASE = "PALODON_DB_POSTGRES_DATABASE"
+    const val DB_POSTGRES_USERNAME = "PALODON_DB_POSTGRES_USERNAME"
+    const val DB_POSTGRES_PASSWORD = "PALODON_DB_POSTGRES_PASSWORD"
+    const val DB_SQLITE_PATH = "PALODON_DB_SQLITE_PATH"
+}

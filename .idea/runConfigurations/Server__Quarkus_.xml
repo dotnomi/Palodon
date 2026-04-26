@@ -3,6 +3,11 @@
     <module name="palodon.server.main" />
     <QsGradleRunConfiguration>
       <ExternalSystemSettings>
+        <option name="env">
+          <map>
+            <entry key="PALODON_DB_TYPE" value="SQLITE" />
+          </map>
+        </option>
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/server" />
         <option name="externalSystemIdString" value="GRADLE" />

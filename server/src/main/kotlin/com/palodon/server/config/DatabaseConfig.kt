@@ -1,6 +1,7 @@
 package com.palodon.server.config
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import com.palodon.server.enumerator.DatabaseType
 import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 @Suppress("KotlinNullnessAnnotation")
