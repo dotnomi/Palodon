@@ -1,9 +1,9 @@
 package com.palodon.server.constant
 
-object Properties {
+object Property {
     object Quarkus {
         object Datasource {
-            object JDBC {
+            object Jdbc {
                 const val URL = "quarkus.datasource.jdbc.url"
             }
 
