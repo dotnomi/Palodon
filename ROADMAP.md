@@ -8,7 +8,7 @@
     - [x] Configure **SQLite** as the primary database.
     - [x] Implement **PostgreSQL** as a configurable database via config or environment variable (`DATABASE_TYPE=postgresql`).
 - [ ] **1.2 Identity & Authentication**
-    - [ ] Define User entity (Username, UUID, Password Hashing).
+    - [x] Define User entity (Username, UUID, Password Hashing).
     - [ ] Setup JWT (JSON Web Token) infrastructure for secure API access.
     - [ ] Create REST endpoints for User Registration and Login.
 - [ ] **1.3 Connection Flow (Client)**

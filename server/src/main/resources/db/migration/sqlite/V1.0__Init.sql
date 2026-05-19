@@ -2,7 +2,7 @@
 
 -- Create the user table
 CREATE TABLE IF NOT EXISTS palodon_user (
-    user_id BIGINT PRIMARY KEY NOT NULL,
+    user_id BIGINT PRIMARY KEY NOT NULL UNIQUE,
     username VARCHAR(255) NOT NULL UNIQUE,
     displayname VARCHAR(255) NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
