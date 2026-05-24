@@ -1,11 +1,28 @@
 package com.palodon.server.service
 
 import com.palodon.server.enumerator.SnowflakeIdType
+import com.palodon.server.enumerator.TimeDivisor
 import jakarta.enterprise.context.ApplicationScoped
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap
 import org.slf4j.LoggerFactory
 
+/**
+ * Service for generating unique, roughly time-ordered identifiers.
+ *
+ * This implementation guarantees strict decimal digit lengths based on the configuration
+ * in [SnowflakeIdType].
+ *
+ * ### ID Composition:
+ * ```
+ * ID = (TimeOffset * Multiplier) + (WorkerId << SequenceBits) + Sequence + Offset
+ * ```
+ *
+ * ### Features:
+ * - **Worker ID**: Supports horizontal scaling via numeric derivation from a string config.
+ * - **Time Granularity**: Controlled by [TimeDivisor] for each ID type.
+ * - **Clock Safety**: Automatically waits for small clock drifts and prevents backward jumps.
+ */
 @ApplicationScoped
 class SnowflakeIdentifierService {
     private val logger = LoggerFactory.getLogger(this::class.java)
@@ -45,7 +62,7 @@ class SnowflakeIdentifierService {
             }
 
             if (currentTime == state.lastTime) {
-                state.sequence = (state.sequence + 1) % (1L shl type.length)
+                state.sequence = (state.sequence + 1) % (1L shl type.sequenceBits)
                 if (state.sequence == 0L) {
                     currentTime = waitUntilNextTime(type, currentTime)
                     state.sequence = 0L
@@ -61,7 +78,7 @@ class SnowflakeIdentifierService {
             
             // Composition
             val timePart = timeOffset * type.multiplier
-            val workerPart = effectiveWorkerId shl type.length
+            val workerPart = effectiveWorkerId shl type.sequenceBits
             
             return timePart + workerPart + state.sequence + type.offset
         }
@@ -69,11 +86,11 @@ class SnowflakeIdentifierService {
 
     private fun getCurrentTime(type: SnowflakeIdType): Long {
         val now = Instant.now().toEpochMilli()
-        return if (type == SnowflakeIdType.MESSAGE) now else now / 1000
+        return now / type.timeDivisor.divisor
     }
 
     private fun getEpoch(type: SnowflakeIdType): Long {
-        return if (type == SnowflakeIdType.MESSAGE) epoch else epoch / 1000
+        return epoch / type.timeDivisor.divisor
     }
 
     private fun waitUntilNextTime(type: SnowflakeIdType, lastTime: Long): Long {
