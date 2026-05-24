@@ -1,6 +1,7 @@
 package com.palodon.server.service
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.palodon.server.config.PalodonConfig
 import com.palodon.server.constant.Environment
 import com.palodon.server.enumerator.DatabaseType
@@ -11,7 +12,7 @@ import java.io.File
 
 object ConfigService {
     private val logger = LoggerFactory.getLogger(ConfigService::class.java)
-    private val mapper = ObjectMapper()
+    private val mapper = ObjectMapper().registerKotlinModule()
     private val configFile = File("palodon.config.json")
 
     val config: PalodonConfig by lazy {
@@ -42,6 +43,12 @@ object ConfigService {
 
     private fun applyEnvironmentVariables(config: PalodonConfig): Boolean {
         var changed = false
+        System.getenv(Environment.Miscellaneous.WORKER_ID)?.let {
+            if (config.workerId != it) {
+                config.workerId = it
+                changed = true
+            }
+        }
         System.getenv(Environment.Database.TYPE)?.let {
             try {
                 val type = DatabaseType.valueOf(it.uppercase())

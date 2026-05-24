@@ -7,6 +7,11 @@ import jakarta.validation.constraints.NotNull
 @Suppress("KotlinNullnessAnnotation")
 data class PalodonConfig(
     @Valid
+    @NotNull(message = "Worker ID must not be null!")
+    @JsonProperty("worker-id")
+    var workerId: String = "palodon-01",
+
+    @Valid
     @NotNull(message = "Database must not be null!")
     @JsonProperty("database")
     var database: DatabaseConfig = DatabaseConfig()

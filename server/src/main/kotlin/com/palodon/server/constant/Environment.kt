@@ -1,6 +1,9 @@
 package com.palodon.server.constant
 
 object Environment {
+    object Miscellaneous {
+        const val WORKER_ID = "PALODON_WORKER_ID"
+    }
     object Database {
         object Postgres {
             const val HOST = "PALODON_DB_POSTGRES_HOST"
