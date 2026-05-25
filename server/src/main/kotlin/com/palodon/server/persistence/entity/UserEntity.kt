@@ -6,7 +6,8 @@ import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import java.time.LocalDateTime
+import kotlin.time.Clock
+import kotlin.time.Instant
 
 @Entity
 @Table(schema = "palodon", name = "user")
@@ -26,11 +27,11 @@ class UserEntity {
     var passwordHash: String? = null
 
     @Column(name = "created_at", nullable = false)
-    var createdAt: LocalDateTime? = null
+    var createdAt: Instant = Clock.System.now()
 
     @Column(name = "updated_at")
-    var updatedAt: LocalDateTime? = null
+    var updatedAt: Instant? = null
 
     @Column(name = "deleted_at")
-    var deletedAt: LocalDateTime? = null
+    var deletedAt: Instant? = null
 }
