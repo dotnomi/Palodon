@@ -3,8 +3,10 @@ package com.palodon.server.service
 import com.palodon.server.enumerator.SnowflakeIdType
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.EnumSource
+import java.time.Instant
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 
@@ -38,9 +40,8 @@ class SnowflakeIdentifierServiceTest {
     @ParameterizedTest
     @EnumSource(SnowflakeIdType::class)
     fun `generateId should handle sequence exhaustion by waiting for next tick`(type: SnowflakeIdType) {
-        // Calculate how many IDs are needed to exhaust the sequence in one tick
         val sequenceCapacity = 1 shl type.sequenceBits
-        val countToGenerate = sequenceCapacity + 10 // Force overflow into next tick
+        val countToGenerate = sequenceCapacity + 10 
         
         val ids = mutableSetOf<Long>()
         repeat(countToGenerate) {
@@ -49,7 +50,6 @@ class SnowflakeIdentifierServiceTest {
         
         assertEquals(countToGenerate, ids.size, "Should generate all IDs uniquely even after exhausting sequence for ${type.name}")
         
-        // Verify time progression (IDs should be strictly increasing)
         val idList = ids.toList().sorted()
         for (i in 0 until idList.size - 1) {
             assertTrue(idList[i+1] > idList[i], "IDs should be monotonically increasing")
@@ -84,13 +84,70 @@ class SnowflakeIdentifierServiceTest {
         latch.await()
         executor.shutdown()
 
-        /*val title = "===== ${type.name} ====="
-        LoggerFactory.getLogger(this::class.java).info(title)
-        for ((index, value) in generatedIds.withIndex()) {
-            LoggerFactory.getLogger(this::class.java).info("\"${index}\":\"${value}\"")
-        }
-        LoggerFactory.getLogger(this::class.java).info("=".repeat(title.length))*/
-
         assertEquals(threadCount * idsPerThread, generatedIds.size, "Generated IDs should be entirely unique for type ${type.name}")
+    }
+
+    @Test
+    fun `multiplier should be safe for all types`() {
+        SnowflakeIdType.entries.forEach { type ->
+            val capacity = 1L shl (type.sequenceBits + type.workerBits)
+            assertTrue(type.multiplier >= capacity, 
+                "Type ${type.name} multiplier (${type.multiplier}) is too small for capacity ($capacity). Collisions will occur!")
+        }
+    }
+
+    @Test
+    fun `workerId derivation should be consistent and handle overflow`() {
+        assertDoesNotThrow {
+            service.generateId(SnowflakeIdType.USER)
+            service.generateId(SnowflakeIdType.MESSAGE)
+        }
+    }
+
+    @Test
+    fun `generateId should throw exception on large clock rollback`() {
+        val statesField = SnowflakeIdentifierService::class.java.getDeclaredField("states")
+        statesField.isAccessible = true
+        @Suppress("UNCHECKED_CAST")
+        val states = statesField.get(service) as MutableMap<SnowflakeIdType, Any>
+
+        service.generateId(SnowflakeIdType.USER)
+
+        val typeState = states[SnowflakeIdType.USER]!!
+        val lastTimeField = typeState.javaClass.getDeclaredField("lastTime")
+        lastTimeField.isAccessible = true
+
+        val futureTime = (Instant.now().toEpochMilli() / 1000) + 3600
+        lastTimeField.set(typeState, futureTime)
+
+        assertThrows(IllegalStateException::class.java) {
+            service.generateId(SnowflakeIdType.USER)
+        }
+    }
+
+    @ParameterizedTest
+    @EnumSource(SnowflakeIdType::class)
+    fun `IDs should stay within digit limits for 100 years`(type: SnowflakeIdType) {
+        val hundredYearsMs = 100L * 365 * 24 * 60 * 60 * 1000
+        val futureTime = Instant.now().toEpochMilli() + hundredYearsMs
+
+        val epochField = SnowflakeIdentifierService::class.java.getDeclaredField("epoch")
+        epochField.isAccessible = true
+        val epoch = epochField.get(service) as Long
+
+        val timeDivisor = type.timeDivisor.divisor
+        val timeOffset = (futureTime / timeDivisor) - (epoch / timeDivisor)
+
+        val maxWorker = (1L shl type.workerBits) - 1
+        val maxSeq = (1L shl type.sequenceBits) - 1
+
+        val maxId = (timeOffset * type.multiplier) + (maxWorker shl type.sequenceBits) + maxSeq + type.offset
+
+        val length = maxId.toString().length
+        val expectedLength = type.offset.toString().length
+
+        assertEquals(expectedLength, length, "Type ${type.name} ID will grow to $length digits in 100 years (expected $expectedLength)")
+        assertTrue(maxId > 0, "ID must remain positive")
+        assertTrue(maxId < Long.MAX_VALUE)
     }
 }
